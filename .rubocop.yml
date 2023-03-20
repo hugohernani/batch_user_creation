@@ -14,6 +14,7 @@ AllCops:
     - '**/node_modules/**/*'
     - '**/app/views/**/*'
     - '.pryrc'
+    - 'db/**/*'
 
 Lint/MissingSuper:
   Enabled: false
@@ -61,3 +62,11 @@ RSpec/ImplicitSubject:
 
 Rails/Delegate:
   Enabled: false
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - 'spec/system/**/*'
+
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/system/**/*'

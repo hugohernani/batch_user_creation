@@ -77,6 +77,7 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem 'capybara'
+  gem 'launchy', '~> 2.5'
 
   gem 'rubocop-rspec', '~> 2.19'
   gem 'selenium-webdriver'

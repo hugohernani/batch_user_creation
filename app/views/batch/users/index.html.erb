@@ -1,1 +1,12 @@
-Batch User Upload
+<h1>Upload a csv file for creating users</h1>
+
+<%= form_with do |form| %>
+  <%= form.file_field :users_batch %>
+
+  <%= form.submit 'Submit' %>
+<% end %>
+
+<%= turbo_stream_from :user_listing %>
+<div is='turbo-frame' id='users_listing'>
+  <%= render "default" %>
+</div>

@@ -11,7 +11,7 @@ RSpec.describe 'Batch::Users' do
 
         attach_file('users_batch', valid_csv_file_path)
 
-        within '#users-listing' do
+        within '#users_listing' do
           users = peek_users(valid_csv_file_path, 3)
 
           expect(page).to have_content(users[0])
@@ -29,7 +29,7 @@ RSpec.describe 'Batch::Users' do
 
         attach_file('users_batch', invalid_csv_file_path)
 
-        within '#users-listing' do
+        within '#users_listing' do
           users = peek_users(invalid_csv_file_path, 3)
 
           # TODO: Filter element to confirm it's invalid

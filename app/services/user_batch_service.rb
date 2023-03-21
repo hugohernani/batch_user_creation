@@ -8,8 +8,6 @@ class UserBatchService
   end
 
   def call
-    # TODO: Also handle invalid file and invalid/missing headers
-
     view_users = []
     CSV.foreach(@file_path, headers: true).each do |row|
       user = User.new(name: row['name'], password: row['password'])
@@ -22,14 +20,17 @@ class UserBatchService
   private
 
   def build_view_user(user)
-    user.save ? Users::ValidPresenter.new(user) : Users::InvalidPresenter.new(user)
+    return Users::ValidResponsePresenter.new(user) if user.save
+
+    Users::InvalidResponsePresenter.new(user)
   end
 
   def broadcast(user)
     stream_details = {
-      partial: "batch/users/#{user.response_partial}",
+      target: 'user_listing',
+      partial: user.partial_path,
       locals: { user: user }
     }
-    Turbo::StreamsChannel.broadcast_prepend_to(:user_listing, **stream_details)
+    Turbo::StreamsChannel.broadcast_prepend_to('user_listing', **stream_details)
   end
 end

@@ -61,3 +61,11 @@ RSpec/ImplicitSubject:
 
 Rails/Delegate:
   Enabled: false
+
+RSpec/MultipleExpectations:
+  Exclude:
+    - 'spec/system/**/*'
+
+RSpec/ExampleLength:
+  Exclude:
+    - 'spec/system/**/*'

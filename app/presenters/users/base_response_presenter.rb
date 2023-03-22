@@ -1,6 +1,15 @@
 class Users::BaseResponsePresenter
-  def initialize(user)
+  def initialize(user, row_number)
     @user = user
+    @row_number = row_number
+  end
+
+  def id
+    @row_number
+  end
+
+  def name
+    @user.name
   end
 
   def partial_path

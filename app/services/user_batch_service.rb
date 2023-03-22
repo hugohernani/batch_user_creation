@@ -1,3 +1,5 @@
+require 'csv'
+
 class UserBatchService
   def self.call(file_path)
     new(file_path).call
@@ -8,29 +10,37 @@ class UserBatchService
   end
 
   def call
-    view_users = []
-    CSV.foreach(@file_path, headers: true).each do |row|
+    user_responses = []
+    CSV.foreach(@file_path, headers: true, skip_blanks: true).each_with_index do |row, index|
       user = User.new(name: row['name'], password: row['password'])
-      view_users << build_view_user(user)
+      user_responses << build_user_response(user, index + 1)
     end
 
-    view_users.each{ |user| broadcast(user) }
+    stream_first_user_response(user_responses.shift)
+    user_responses.each{ |user| stream_user_response(user) }
   end
 
   private
 
-  def build_view_user(user)
-    return Users::ValidResponsePresenter.new(user) if user.save
+  def build_user_response(user, row_number)
+    return Users::ValidResponsePresenter.new(user, row_number) if user.save
 
-    Users::InvalidResponsePresenter.new(user)
+    Users::InvalidResponsePresenter.new(user, row_number)
   end
 
-  def broadcast(user)
-    stream_details = {
-      target: 'user_listing',
+  def stream_first_user_response(user)
+    Turbo::StreamsChannel.broadcast_update_to('users_batch', **stream_details(user))
+  end
+
+  def stream_user_response(user)
+    Turbo::StreamsChannel.broadcast_append_to('users_batch', **stream_details(user))
+  end
+
+  def stream_details(user)
+    {
+      target: 'user_responses',
       partial: user.partial_path,
       locals: { user: user }
     }
-    Turbo::StreamsChannel.broadcast_prepend_to('user_listing', **stream_details)
   end
 end

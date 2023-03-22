@@ -1,9 +1,9 @@
 class Users::InvalidResponsePresenter < Users::BaseResponsePresenter
-  def partial_path
-    'batch/users/invalid_response'
+  def errors
+    @user.errors.full_messages
   end
 
-  def to_s
-    "#{@user.name} - INVALID"
+  def partial_path
+    'batch/users/invalid_response'
   end
 end

@@ -5,7 +5,9 @@ describe UserBatchService do
   subject(:service) { described_class.new(file_path) }
 
   describe 'call' do
-    let(:turbo_stream) { class_double(Turbo::StreamsChannel, broadcast_prepend_to: nil) }
+    let(:turbo_stream) do
+      class_double(Turbo::StreamsChannel, broadcast_append_to: nil, broadcast_update_to: nil)
+    end
 
     before do
       stub_const('Turbo::StreamsChannel', turbo_stream)
@@ -25,17 +27,20 @@ describe UserBatchService do
         expect(persisted_users_count).to eq(csv_users.size)
       end
 
-      it 'delegates stream response for each csv user' do # rubocop:disable RSpec/ExampleLength
+      it "delegates 'update' stream response for first csv user" do
         service.call
 
-        turbo_broadcast_expectations = {
-          target: 'user_listing',
-          partial: 'batch/users/valid_response',
-          locals: { user: be_a(Users::ValidResponsePresenter) }
-        }
-        expect(turbo_stream).to have_received(:broadcast_prepend_to)
-          .with('user_listing', **turbo_broadcast_expectations)
-          .exactly(csv_users.size).times
+        expect(turbo_stream).to have_received(:broadcast_update_to)
+          .with('users_batch', **turbo_broadcast_expectations('valid'))
+          .once
+      end
+
+      it 'delegates stream response for each csv user' do
+        service.call
+
+        expect(turbo_stream).to have_received(:broadcast_append_to)
+          .with('users_batch', **turbo_broadcast_expectations('valid'))
+          .exactly(csv_users.size - 1).times
       end
     end
 
@@ -78,23 +83,24 @@ describe UserBatchService do
       it 'delegates a stream response for each csv user', :aggregate_failures do # rubocop:disable RSpec/ExampleLength
         service.call
 
-        turbo_broadcast_expectations = { target: 'user_listing' }
-        valid_expectations = {
-          partial: 'batch/users/valid_response',
-          locals: { user: be_a(Users::ValidResponsePresenter) }
-        }
-        invalid_expectations = {
-          partial: 'batch/users/invalid_response',
-          locals: { user: be_a(Users::InvalidResponsePresenter) }
-        }
-
-        expect(turbo_stream).to have_received(:broadcast_prepend_to)
-          .with('user_listing', **turbo_broadcast_expectations.merge(valid_expectations))
-          .exactly(2).times
-        expect(turbo_stream).to have_received(:broadcast_prepend_to)
-          .with('user_listing', **turbo_broadcast_expectations.merge(invalid_expectations))
+        expect(turbo_stream).to have_received(:broadcast_update_to)
+          .with('users_batch', **turbo_broadcast_expectations('valid'))
+          .once
+        expect(turbo_stream).to have_received(:broadcast_append_to)
+          .with('users_batch', **turbo_broadcast_expectations('invalid'))
+          .once
+        expect(turbo_stream).to have_received(:broadcast_append_to)
+          .with('users_batch', **turbo_broadcast_expectations('valid'))
           .exactly(2).times
       end
+    end
+
+    def turbo_broadcast_expectations(partial_type)
+      {
+        target: 'user_responses',
+        partial: "batch/users/#{partial_type}_response",
+        locals: { user: be_a(Users::ValidResponsePresenter) }
+      }
     end
   end
 end

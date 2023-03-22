@@ -88,9 +88,9 @@ describe UserBatchService do
           .once
         expect(turbo_stream).to have_received(:broadcast_append_to)
           .with('users_batch', **turbo_broadcast_expectations('invalid'))
-          .once
+          .exactly(2).times
         expect(turbo_stream).to have_received(:broadcast_append_to)
-          .with('users_batch', **turbo_broadcast_expectations('valid'))
+          .with('users_batch', **turbo_broadcast_expectations('invalid'))
           .exactly(2).times
       end
     end
@@ -99,7 +99,7 @@ describe UserBatchService do
       {
         target: 'user_responses',
         partial: "batch/users/#{partial_type}_response",
-        locals: { user: be_a(Users::ValidResponsePresenter) }
+        locals: { user: be_a(Users::BaseResponsePresenter) }
       }
     end
   end

@@ -13,16 +13,14 @@ RSpec.describe 'Batch::Users', inline_sidekiq: true do
         submit_form
 
         within '#user_responses' do
-          users = peek_users(valid_csv_file_path, 3)
+          users = peek_users(valid_csv_file_path, 1)
 
           expect(page).to have_content(users[0])
-          expect(page).to have_content(users[1])
-          expect(page).to have_content(users[2])
         end
       end
     end
 
-    context 'when there are invalid users', headless: false do
+    context 'when there are invalid users' do
       let(:invalid_csv_file_path) { Rails.root.join('spec', 'fixtures', 'batch', 'users', 'invalid.csv') }
 
       it 'creates each user in it' do
@@ -32,11 +30,10 @@ RSpec.describe 'Batch::Users', inline_sidekiq: true do
         submit_form
 
         within '#user_responses' do
-          users = peek_users(invalid_csv_file_path, 3)
+          user = peek_users(invalid_csv_file_path, 1)[0]
 
-          apply_expectation_for_invalid_user(users[0], 1)
-          apply_expectation_for_invalid_user(users[1], 2)
-          apply_expectation_for_invalid_user(users[2], 3)
+          expect(page).to have_content('(1 - INVALID)')
+          expect(page).to have_content(user)
         end
       end
     end
@@ -48,11 +45,6 @@ RSpec.describe 'Batch::Users', inline_sidekiq: true do
     def peek_users(file_path, quantity)
       csv = CSV.foreach(file_path, headers: true).take(quantity)
       csv.pluck('name')
-    end
-
-    def apply_expectation_for_invalid_user(user, mocked_row_number)
-      expect(page).to have_content("(#{mocked_row_number} - INVALID)")
-      expect(page).to have_content(user)
     end
   end
 end

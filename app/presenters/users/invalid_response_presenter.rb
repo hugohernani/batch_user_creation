@@ -1,6 +1,6 @@
 class Users::InvalidResponsePresenter < Users::BaseResponsePresenter
   def errors
-    @user.errors.full_messages
+    @user.errors.full_messages.join(',')
   end
 
   def partial_path

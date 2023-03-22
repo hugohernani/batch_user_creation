@@ -1,0 +1,50 @@
+version: '3.7'
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  app: &app
+    build: .
+    tty: true
+    stdin_open: true
+    env_file:
+      - .env
+    environment:
+      POSTGRESQL_HOST: db
+      POSTGRESQL_USERNAME: postgres_user
+      POSTGRESQL_PASSWORD: postgres_password
+      REDIS_URL: redis://redis:6379
+    volumes:
+      - .:/myapp
+    depends_on:
+      - db
+      - redis
+
+  sidekiq:
+    <<: *app
+    command: bundle exec sidekiq
+
+  web:
+    <<: *app
+    command: rails server -b 0.0.0.0
+    depends_on:
+      - sidekiq
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:
+  redisdata:

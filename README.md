@@ -4,7 +4,7 @@
  > Once the row is processed the (successful or failed) result is pushed back from server to client through websocket (ActionCable)
  > orchestrated by **turbo** stream and frames.
 
-#### It's available at [Heroku (TODO)](TODO)
+#### It's available at https://pacific-thicket-19529.herokuapp.com
 
 ### How to run it
 

@@ -5,7 +5,7 @@ class Batch::UsersController < ApplicationController
     @handler = FileHandler.new(file_handler_params)
 
     if @handler.save
-      UserBatchUploadJob.perform_later(@handler.csv_path)
+      UserBatchUploadJob.perform_later(@handler)
       head :ok
     else
       render :index, status: :unprocessable_entity

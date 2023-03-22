@@ -1,7 +1,7 @@
 class UserBatchUploadJob < ApplicationJob
   queue_as :default
 
-  def perform(file_path)
-    UserBatchService.call(file_path)
+  def perform(file_handler)
+    UserBatchService.call(file_handler)
   end
 end

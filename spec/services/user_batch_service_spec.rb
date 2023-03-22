@@ -2,7 +2,13 @@ require 'rails_helper'
 require 'csv'
 
 describe UserBatchService do
-  subject(:service) { described_class.new(file_path) }
+  subject(:service) { described_class.new(file_handler) }
+
+  let(:file_handler) do
+    create(:file_handler).tap do |handler|
+      handler.csv.attach(io: File.open(file_path), filename: 'users.csv', content_type: 'application/pdf')
+    end
+  end
 
   describe 'call' do
     let(:turbo_stream) do

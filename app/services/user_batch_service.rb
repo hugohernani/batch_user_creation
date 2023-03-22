@@ -1,17 +1,17 @@
 require 'csv'
 
 class UserBatchService
-  def self.call(file_path)
-    new(file_path).call
+  def self.call(file_handler)
+    new(file_handler).call
   end
 
-  def initialize(file_path)
-    @file_path = file_path
+  def initialize(file_handler)
+    @file_handler = file_handler
   end
 
   def call
     user_responses = []
-    CSV.foreach(@file_path, headers: true, skip_blanks: true).each_with_index do |row, index|
+    CSV.parse(@file_handler.csv.download, headers: true, skip_blanks: true).each_with_index do |row, index|
       user = User.new(name: row['name'], password: row['password'])
       user_responses << build_user_response(user, index + 1)
     end

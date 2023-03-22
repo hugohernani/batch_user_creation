@@ -52,3 +52,5 @@ tags
 
 # Env variables
 .env
+
+/config/secrets/*

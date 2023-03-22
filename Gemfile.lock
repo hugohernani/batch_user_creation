@@ -220,8 +220,6 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     redis (4.8.1)
-    redis-client (0.14.0)
-      connection_pool
     redis-namespace (1.10.0)
       redis (>= 4)
     regexp_parser (2.7.0)
@@ -280,11 +278,10 @@ GEM
     shellany (0.0.1)
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
-    sidekiq (7.0.7)
-      concurrent-ruby (< 2)
-      connection_pool (>= 2.3.0)
-      rack (>= 2.2.4)
-      redis-client (>= 0.11.0)
+    sidekiq (6.5.8)
+      connection_pool (>= 2.2.5, < 3)
+      rack (~> 2.0)
+      redis (>= 4.5.0, < 5)
     sinatra (3.0.5)
       mustermann (~> 3.0)
       rack (~> 2.2, >= 2.2.4)
@@ -353,7 +350,7 @@ DEPENDENCIES
   rubocop-rspec (~> 2.19)
   selenium-webdriver
   shoulda-matchers (~> 5.0)
-  sidekiq
+  sidekiq (~> 6.5)
   sinatra
   sprockets-rails
   stimulus-rails

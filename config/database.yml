@@ -16,5 +16,3 @@ test:
 production:
   <<: *default
   database: batch_user_creation_production
-  username: batch_user_creation
-  password: <%= ENV['DATABASE_URL'] %>

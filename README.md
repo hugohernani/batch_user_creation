@@ -1,24 +1,38 @@
-# README
+# Users Batch
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+ > This project allows for upload a csv file so that users will be created by parsing each row in the file.
+ > Once the row is processed the (successful or failed) result is pushed back from server to client through websocket (ActionCable)
+ > orchestrated by **turbo** stream and frames.
 
-Things you may want to cover:
+#### It's available at [Heroku (TODO)](TODO)
 
-* Ruby version
+### How to run it
 
-* System dependencies
+it's built with **Docker** in mind. This allows the project to be up and running by easily running `docker-compose` command:
 
-* Configuration
+```zsh
+docker-compose up
+```
 
-* Database creation
+If it's the first it's being running you may need to create and migrate the database. i.e.:
 
-* Database initialization
+```
+docker exec batch_user_creation-web-1 bin/rails db:create db:migrate
+```
 
-* How to run the test suite
+If you need to, you may also run each dependent service (i.e. postgresql and redis databases, sidekiq worker) manually and then run rails server as usual. Check config files to see which database user and ports you should run each server so they talk to each other. This currently follows out of box configuration. Also, check system requirements below to use dependent tools
 
-* Services (job queues, cache servers, search engines, etc.)
+### System Specification
 
-* Deployment instructions
+* Ruby Version: 3.1.2
 
-* ...
+* Rails Version: 7.0.4.3
+
+* Postgresql server version: 12
+
+* Redis server version: 6.2
+
+* Check gemset for each required version
+
+* Project uses selenium web driver for feature/integration tests. It relies on chrome. You should have a stable chromium package installed on your system
+

@@ -1,9 +1,10 @@
 class Batch::UsersController < ApplicationController
   def index
-    render inline: limit_message if FileHandler.count > 30 # rubocop:disable Rails/RenderInline
+    render inline: limit_message if reached_limit? # rubocop:disable Rails/RenderInline
   end
 
   def create
+    redirect_to :index if reached_limit?
     @handler = FileHandler.new(file_handler_params)
 
     if @handler.save
@@ -27,4 +28,11 @@ class Batch::UsersController < ApplicationController
       hhernanni@gmail.com
     STR
   end
+
+  # temporary solution for limiting upload feature
+  # so that we have a plan for bucket cost saving
+  def reached_limit?
+    FileHandler.reached_byte_size_limit?
+  end
+  helper_method :reached_limit?
 end

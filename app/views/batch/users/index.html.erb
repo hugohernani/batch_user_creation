@@ -5,9 +5,9 @@
 
 <main>
 <%= form_with model: FileHandler.new, url: users_batch_path do |form| %>
-  <%= form.file_field :csv, direct_upload: true  %>
+  <%= form.file_field :csv, direct_upload: !reached_limit? %>
 
-  <%= form.submit 'Submit' %>
+  <%= form.submit 'Submit', disabled: reached_limit? %>
 <% end %>
 </main>
 

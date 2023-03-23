@@ -20,14 +20,28 @@ label {
 	margin-bottom: 10px;
 }
 
-input[type=file] {
-	margin-bottom: 20px;
+.file-input-container {
+  display: flex
+  align-items: center;
+  margin-bottom: 20px;
+}
+.file-input-container input[type=file] {
+	margin-right: 10px;
 }
 
-button[type=submit] {
-	background-color: #333;
-	color: #fff;
-	padding: 10px 20px;
+.file-input-container a.sample {
+  text-decoration: none;
+  color: white;
+  cursor: pointer;
+  background-color: orange;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+input[type=submit] {
+	background-color: blue;
+	color: white;
+	padding: 10px 0px;
 	border: none;
 	border-radius: 5px;
 	font-size: 18px;

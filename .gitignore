@@ -54,3 +54,4 @@ tags
 .env
 
 /config/secrets/*
+docker-compose.dev.yml

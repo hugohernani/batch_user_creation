@@ -23,7 +23,7 @@ RSpec.describe 'Batch::Users', inline_sidekiq: true do
     context 'when there are invalid users' do
       let(:invalid_csv_file_path) { Rails.root.join('spec', 'fixtures', 'batch', 'users', 'invalid.csv') }
 
-      it 'creates each user in it' do
+      it 'creates each user in it', :aggregate_failures do
         visit root_path
 
         attach_file('file_handler[csv]', invalid_csv_file_path)
@@ -32,8 +32,12 @@ RSpec.describe 'Batch::Users', inline_sidekiq: true do
         within '#user_responses' do
           user = peek_users(invalid_csv_file_path, 1)[0]
 
-          expect(page).to have_content('(1 - INVALID)')
-          expect(page).to have_content(user)
+          first_user_response = page.find_by_id('1_response')
+          expect(first_user_response).to have_content(user)
+          expect(first_user_response).to have_css('.errors', text: 'should have at least one lowercase')
+          expect(first_user_response).to have_css('.errors', text: 'should have at least one digit')
+          expect(first_user_response).to have_css('.errors', text: 'should not contain 3 or more characters in a row')
+          expect(first_user_response).to have_css('.errors', text: 'too short')
         end
       end
     end

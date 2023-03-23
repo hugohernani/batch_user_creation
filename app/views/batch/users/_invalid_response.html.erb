@@ -1,5 +1,5 @@
-<li class='failure'>
-  <span>(<%= user.id %> - INVALID)</span>
-  <span><%= user.name %></span>
-  <span><%= user.errors %></span>
+<li id="<%= "#{user.id}_response" %>" class='failure'>
+  <span>(<%= user.id %>)</span>
+  <span><%= user.name %> | </span>
+  <span class='errors'><%= user.errors %></span>
 </li>

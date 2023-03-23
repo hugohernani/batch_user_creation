@@ -1,6 +1,8 @@
 class Users::InvalidResponsePresenter < Users::BaseResponsePresenter
   def errors
-    @user.errors.full_messages.join(',')
+    @user.errors.messages.inject('') do |error_messages, (field, errors)|
+      error_messages << "#{field.capitalize} #{errors.to_sentence}"
+    end
   end
 
   def partial_path
